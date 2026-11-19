@@ -18,8 +18,21 @@ export const handler = async (event) => {
     let body;
     try { body = JSON.parse(event.body ?? '{}'); } catch { return respond(400, {title:'JSON inválido',status:400,detail:'El body debe ser JSON'}); }
     if (!clientes[id]) return respond(404, {title:'No encontrado',status:404,detail:'Cliente inexistente'});
-    if (!body || typeof body !== 'object' || Array.isArray(body) || !['AHORROS','CORRIENTE'].includes(body.tipo) || !['PEN','USD'].includes(body.moneda) || typeof body.titular !== 'string' || !body.titular.trim())
-      return respond(400, {title:'Datos inválidos',status:400,detail:'tipo, moneda y titular son obligatorios y deben ser válidos'});
+    if (
+  !body ||
+  typeof body !== 'object' ||
+  Array.isArray(body) ||
+  !['AHORROS', 'CORRIENTE'].includes(body.tipo) ||
+  !['PEN', 'USD'].includes(body.moneda) ||
+  typeof body.titular !== 'string' ||
+  !body.titular.trim()
+) {
+  return respond(400, {
+    title: 'Datos inválidos',
+    status: 400,
+    detail: 'tipo, moneda y titular son obligatorios y deben ser válidos'
+  });
+}
     return respond(201, {numeroCuenta:'SIMULADO-0001',tipo:body.tipo,moneda:body.moneda,titular:body.titular,saldo:0,nota:'Simulación sin persistencia'});
   }
   return respond(405, {title:'Método no permitido',status:405,detail:`${method} no está habilitado`});
